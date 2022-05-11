@@ -1,55 +1,57 @@
 def edmonds_karp(C, inicio, fim):
-    n = len(C) # C e a matriz de capacidade
+    n = len(C)  # C e a matriz de capacidade
     F = [[0] * n for _ in range(n)]
     # capacidade residual u para v é C[u][v] - F[u][v]
 
     feito = False
 
     while not feito:
-        path = bfs(C, F, inicio, fim)
-        if not path:
+        caminho = bfs(C, F, inicio, fim)
+        if not caminho:
             feito = True
         # ir pelos caminhos para encontrar menor capacidade
         if not feito:
-            u,v = path[0], path[1]
-            flow = C[u][v] - F[u][v]
-            for i in range(len(path) - 2):
-                u,v = path[i+1], path[i+2]
-                flow = min(flow, C[u][v] - F[u][v])
+            u, v = caminho[0], caminho[1]
+            fluxo = C[u][v] - F[u][v]
+            for i in range(len(caminho) - 2):
+                u, v = caminho[i+1], caminho[i+2]
+                fluxo = min(fluxo, C[u][v] - F[u][v])
             # atravessar os caminhos para atualizar o fluxo
-            for i in range(len(path) - 1):
-                u,v = path[i], path[i+1]
-                F[u][v] += flow
-                F[v][u] -= flow
+            for i in range(len(caminho) - 1):
+                u, v = caminho[i], caminho[i+1]
+                F[u][v] += fluxo
+                F[v][u] -= fluxo
     return sum([F[inicio][i] for i in range(n)])
 
+
 def bfs(C, F, inicio, fim):
-    P = [-1] * len(C) # pai na arvore de pesquisa
+    P = [-1] * len(C)  # pai na arvore de pesquisa
     P[inicio] = inicio
-    queue = [inicio]
-    while queue:
-        u = queue.pop(0)
+    fila = [inicio]
+    while fila:
+        u = fila.pop(0)
         for v in range(len(C)):
             if C[u][v] - F[u][v] > 0 and P[v] == -1:
                 P[v] = u
-                queue.append(v)
+                fila.append(v)
                 if v == fim:
-                    path = []
+                    caminho = []
                     while True:
-                        path.insert(0, v)
+                        caminho.insert(0, v)
                         if v == inicio:
                             break
                         v = P[v]
-                    return path
+                    return caminho
     return None
 
+
 if __name__ == "__main__":
-    matriz = [[0, 3, 0, 3, 0, 0, 0],
-              [0, 0, 4, 0, 0, 0, 0],
-              [3, 0, 0, 1, 2, 0, 0],
-              [0, 0, 0, 0, 2, 6, 0],
-              [0, 1, 0, 0, 0, 0, 1],
-              [0, 0, 0, 0, 0, 0, 9],
-              [0, 0, 0, 0, 0, 0, 0]]
+    matriz = [[0, 3, 0, 3, 0],
+              [0, 0, 4, 0, 0],
+              [3, 0, 0, 1, 2],
+              [0, 0, 0, 0, 2],
+              [0, 0, 0, 0, 0],
+              
+              ]
 
     print(edmonds_karp(matriz, 0, 1))
