@@ -1,7 +1,7 @@
 def edmonds_karp(C, inicio, fim):
     n = len(C) # C e a matriz de capacidade
     F = [[0] * n for _ in range(n)]
-    # residual capacity from u to v is C[u][v] - F[u][v]
+    # capacidade residual u para v é C[u][v] - F[u][v]
 
     feito = False
 
@@ -9,14 +9,14 @@ def edmonds_karp(C, inicio, fim):
         path = bfs(C, F, inicio, fim)
         if not path:
             feito = True
-        # traverse path to find smallest capacity
+        # ir pelos caminhos para encontrar menor capacidade
         if not feito:
             u,v = path[0], path[1]
             flow = C[u][v] - F[u][v]
             for i in range(len(path) - 2):
                 u,v = path[i+1], path[i+2]
                 flow = min(flow, C[u][v] - F[u][v])
-            # traverse path to update flow
+            # atravessar os caminhos para atualizar o fluxo
             for i in range(len(path) - 1):
                 u,v = path[i], path[i+1]
                 F[u][v] += flow
@@ -24,7 +24,7 @@ def edmonds_karp(C, inicio, fim):
     return sum([F[inicio][i] for i in range(n)])
 
 def bfs(C, F, inicio, fim):
-    P = [-1] * len(C) # parent in search tree
+    P = [-1] * len(C) # pai na arvore de pesquisa
     P[inicio] = inicio
     queue = [inicio]
     while queue:
