@@ -1,0 +1,47 @@
+from xml.sax.handler import feature_validation
+
+
+def edmonds_karp(C, inicio, fim):
+    n = len(C) # C e a matriz de capacidade
+    F = [[0] * n for _ in xrange(n)]
+    # residual capacity from u to v is C[u][v] - F[u][v]
+
+    feito = False
+
+    while not feito:
+        path = bfs(C, F, inicio, fim)
+        if not path:
+            feito = True
+        # traverse path to find smallest capacity
+        if not feito:
+            u,v = path[0], path[1]
+            flow = C[u][v] - F[u][v]
+            for i in xrange(len(path) - 2):
+                u,v = path[i+1], path[i+2]
+                flow = min(flow, C[u][v] - F[u][v])
+            # traverse path to update flow
+            for i in range(len(path) - 1):
+                u,v = path[i], path[i+1]
+                F[u][v] += flow
+                F[v][u] -= flow
+    return sum([F[inicio][i] for i in xrange(n)])
+
+def bfs(C, F, inicio, fim):
+    P = [-1] * len(C) # parent in search tree
+    P[inicio] = inicio
+    queue = [inicio]
+    while queue:
+        u = queue.pop(0)
+        for v in xrange(len(C)):
+            if C[u][v] - F[u][v] > 0 and P[v] == -1:
+                P[v] = u
+                queue.append(v)
+                if v == fim:
+                    path = []
+                    while True:
+                        path.insert(0, v)
+                        if v == inicio:
+                            break
+                        v = P[v]
+                    return path
+    return None
