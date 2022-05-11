@@ -1,6 +1,3 @@
-from xml.sax.handler import feature_validation
-
-
 def edmonds_karp(C, inicio, fim):
     n = len(C) # C e a matriz de capacidade
     F = [[0] * n for _ in xrange(n)]
