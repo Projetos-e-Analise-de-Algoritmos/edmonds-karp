@@ -1,6 +1,7 @@
 def edmonds_karp(C, inicio, fim):
     n = len(C)  # C e a matriz de capacidade
     F = [[0] * n for _ in range(n)]
+    fluxo_min = 0
     # capacidade residual u para v é C[u][v] - F[u][v]
 
     feito = False
@@ -15,13 +16,15 @@ def edmonds_karp(C, inicio, fim):
             fluxo = C[u][v] - F[u][v]
             for i in range(len(caminho) - 2):
                 u, v = caminho[i+1], caminho[i+2]
-                fluxo = min(fluxo, C[u][v] - F[u][v])
+                fluxo += C[u][v] - F[u][v]
             # atravessar os caminhos para atualizar o fluxo
             for i in range(len(caminho) - 1):
                 u, v = caminho[i], caminho[i+1]
                 F[u][v] += fluxo
                 F[v][u] -= fluxo
-    return sum([F[inicio][i] for i in range(n)])
+            if(fluxo_min>fluxo or fluxo_min==0):
+                fluxo_min=fluxo
+    return fluxo_min
 
 
 def bfs(C, F, inicio, fim):
@@ -46,12 +49,12 @@ def bfs(C, F, inicio, fim):
 
 
 if __name__ == "__main__":
-    matriz = [[0, 3, 0, 3, 0],
-              [0, 0, 4, 0, 0],
-              [0, 0, 0, 1, 2],
-              [0, 0, 0, 0, 2],
+    matriz = [[0, 1, 0, 0, 10],
+              [0, 0, 4, 0, 13],
+              [0, 0, 0, 3, 0],
+              [0, 0, 0, 0, 1],
               [0, 0, 0, 0, 0],
-              
+
               ]
 
-    print(edmonds_karp(matriz, 0, 1))
+    print(edmonds_karp(matriz, 0, 4))
